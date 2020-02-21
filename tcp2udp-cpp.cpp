@@ -15,7 +15,8 @@ using namespace std;
 
 int getResponce(char*, int, struct sockaddr_in*);
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	char buf[MAXBUF];
 	struct sockaddr_in serv_addr_local, clnt_addr_in;
 	struct sockaddr_in serv_addr_remote;
@@ -24,7 +25,8 @@ int main(int argc, char **argv) {
 	int sockfd;
 	int bytes;
 
-	if (argc != 4) {
+	if (argc != 4)
+	{
 		cout << "Usage: " << /*argv[0]*/"udp2tcp-cpp"
 				<< " local-port dest-ip dest-port" << endl;
 		exit(0);
@@ -38,13 +40,15 @@ int main(int argc, char **argv) {
 	serv_addr_remote.sin_addr.s_addr = inet_addr(argv[2]);
 
 	// make socket
-	if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 		perror("Error opening socket");
 		exit(1);
 	}
 	//bind socket
 	if (bind(sockfd, (struct sockaddr*) &serv_addr_local,
-			sizeof(serv_addr_local)) < 0) {
+			sizeof(serv_addr_local)) < 0)
+	{
 		perror("Error binding socket");
 		exit(2);
 	}
@@ -52,40 +56,49 @@ int main(int argc, char **argv) {
 	//listen
 	listen(sockfd, 1);
 
-	while (1) {
+	while (1)
+	{
 		// accept socket - not needed for DATAGRAM
 
 		if ((bytes = recvfrom(sockfd, buf, MAXBUF, 0, &clnt_addr, &clnt_len))
-				< 0) {
+				< 0)
+		{
 			perror("Error receaving data");
 			continue;
 		}
 
 		// fork
-		if (fork() == 0) { // chield
+		if (fork() == 0)
+		{ // chield
 //			cout << "Chield: started" << endl;
-			if (fork() == 0) {
-//				cout << "Chield-chield: started" << endl;
-
-				// do something
-//				cout << "Receaved " << bytes << " bytes" << endl;
-				if ((bytes = getResponce(buf, bytes, &serv_addr_remote)) < 0) {
+			if (fork() == 0)
+			{
+				if ((bytes = getResponce(buf, bytes, &serv_addr_remote)) < 0)
+				{
 					cerr << "Error getting responce" << endl;
-				} else
+				}
+				else
 					sendto(sockfd, buf, bytes, 0, &clnt_addr,
 							sizeof(clnt_addr));
 
 //				cout << "Chield-chield: finished" << endl;
 				exit(0);
-			} else {
+			}
+			else
+			{
 				exit(0);
 			}
-		} else { // parent
+		}
+		else
+		{ // parent
 			int st;
 			wait(&st);
-			if (st == 0) {
+			if (st == 0)
+			{
 //				cout << "Chield finished successfully" << endl;
-			} else {
+			}
+			else
+			{
 //				cout << "Chield finished with errorcode: " << st << endl;
 			}
 		}
@@ -99,27 +112,32 @@ int main(int argc, char **argv) {
  * Function connects to addr_in, sends len bytes from buf,
  * receave responce into buf, and returns responce length
  */
-int getResponce(char *buf, int len, struct sockaddr_in *addr_in) {
+int getResponce(char *buf, int len, struct sockaddr_in *addr_in)
+{
 	int bytes;
 	int sockfd;
 
 	// make socket
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
+	{
 		perror("getResponce(): Error opening socket");
 		return -1;
 	}
-	//bind socket
-	if (connect(sockfd, (struct sockaddr*) addr_in, sizeof(*addr_in)) < 0) {
+	// bind socket
+	if (connect(sockfd, (struct sockaddr*) addr_in, sizeof(*addr_in)) < 0)
+	{
 		perror("getResponce(): Error connecting socket");
 		return -2;
 	}
-	//send request
-	if ((bytes = send(sockfd, buf, len, 0)) < 0) {
+	// send request
+	if ((bytes = send(sockfd, buf, len, 0)) < 0)
+	{
 		perror("getResponce(): Error sending request");
 		return -3;
 	}
-	//get responce
-	if ((bytes = recv(sockfd, buf, MAXBUF, 0)) < 0) {
+	// get responce
+	if ((bytes = recv(sockfd, buf, MAXBUF, 0)) < 0)
+	{
 		perror("getResponce(): Error sending request");
 		return -3;
 	}
