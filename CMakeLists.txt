@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (tcp2udp-cpp)
+project (udp2tcp-cpp)
 
-add_executable(tcp2udp-cpp tcp2udp-cpp.cpp)
+add_executable(${CMAKE_PROJECT_NAME} main.cpp)
+find_package(Threads REQUIRED)
+target_link_libraries(${CMAKE_PROJECT_NAME} Threads::Threads)
